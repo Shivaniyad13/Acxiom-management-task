@@ -182,33 +182,84 @@ const TRANSACTIONS = {
   },
 
   // Issue a book
-  issueBook: function (issueData) {
-    console.log("Issuing book:", issueData);
-    // TODO: Implement backend call
-    alert(
-      "Book issued successfully!\nIssue Date: " +
-        issueData.issueDate +
-        "\nReturn Date: " +
-        issueData.returnDate,
-    );
-    document.getElementById("bookIssueForm").reset();
+  issueBook: async function (issueData) {
+    try {
+      const response = await API.issues.issue({
+        bookId: issueData.bookId,
+        memberId: issueData.memberId,
+        dueDate: issueData.returnDate,
+        remarks: issueData.remarks,
+      });
+      if (response.success) {
+        UTILS.showSuccess(
+          "Book issued successfully! Issue Number: " +
+            response.data.issueNumber,
+        );
+        document.getElementById("bookIssueForm").reset();
+        setTimeout(() => (window.location.href = "../dashboard.html"), 1500);
+      }
+    } catch (error) {
+      UTILS.showError("Error issuing book: " + error.message);
+    }
   },
 
   // Return a book
-  returnBook: function (returnData) {
-    console.log("Returning book:", returnData);
-    // TODO: Implement backend call
-    alert("Book returned successfully!");
+  returnBook: async function (returnData) {
+    try {
+      const response = await API.issues.return(returnData.issueId);
+      if (response.success) {
+        // Check if there's a fine to pay
+        if (response.data.fine && response.data.fine > 0) {
+          UTILS.showSuccess(
+            "Fine calculated: Rs. " +
+              response.data.fine +
+              ". Proceeding to payment.",
+          );
+          // Store data in session storage for fine payment page
+          sessionStorage.setItem(
+            "returnData",
+            JSON.stringify({
+              issueId: returnData.issueId,
+              fine: response.data.fine,
+              finePaid: false,
+            }),
+          );
+          setTimeout(() => (window.location.href = "fine_pay.html"), 1500);
+        } else {
+          UTILS.showSuccess("Book returned successfully!");
+          setTimeout(() => (window.location.href = "../dashboard.html"), 1500);
+        }
+      }
+    } catch (error) {
+      UTILS.showError("Error returning book: " + error.message);
+    }
   },
 
   // Pay fine
-  payFine: function (fineData) {
-    console.log("Paying fine:", fineData);
-    // TODO: Implement backend call
-    alert("Fine paid successfully!\nAmount Paid: Rs. " + fineData.payAmount);
-    document.getElementById("finePayForm").reset();
-    // Redirect back to dashboard
-    window.location.href = "../dashboard.html";
+  payFine: async function (fineData) {
+    try {
+      const returnData = JSON.parse(
+        sessionStorage.getItem("returnData") || "{}",
+      );
+      const issueId = returnData.issueId || fineData.issueId;
+
+      if (!issueId) {
+        UTILS.showError("Error: Issue ID not found");
+        return;
+      }
+
+      const response = await API.issues.payFine(issueId);
+      if (response.success) {
+        UTILS.showSuccess(
+          "Fine paid successfully! Amount: Rs. " + fineData.payAmount,
+        );
+        document.getElementById("finePayForm").reset();
+        sessionStorage.removeItem("returnData");
+        setTimeout(() => (window.location.href = "../dashboard.html"), 1500);
+      }
+    } catch (error) {
+      UTILS.showError("Error paying fine: " + error.message);
+    }
   },
 
   // Search member for issue

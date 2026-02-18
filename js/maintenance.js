@@ -290,45 +290,58 @@ const MAINTENANCE = {
   },
 
   // Add new book
-  addBook: function (bookData) {
-    console.log("Adding book:", bookData);
-    // TODO: Implement backend call
-    alert("Book added successfully!");
-    document.getElementById("addBookForm").reset();
+  addBook: async function (bookData) {
+    try {
+      const response = await API.books.add(bookData);
+      if (response.success) {
+        UTILS.showSuccess("Book added successfully!");
+        document.getElementById("addBookForm").reset();
+        // Refresh book list if exists
+        setTimeout(() => window.location.reload(), 1500);
+      }
+    } catch (error) {
+      UTILS.showError("Error adding book: " + error.message);
+    }
   },
 
   // Update book
-  updateBook: function (bookId, bookData) {
-    console.log("Updating book:", bookId, bookData);
-    // TODO: Implement backend call
-    alert("Book updated successfully!");
-    document.getElementById("updateBookForm").reset();
+  updateBook: async function (bookId, bookData) {
+    try {
+      const response = await API.books.update(bookId, bookData);
+      if (response.success) {
+        UTILS.showSuccess("Book updated successfully!");
+        document.getElementById("updateBookForm").reset();
+        setTimeout(() => window.location.reload(), 1500);
+      }
+    } catch (error) {
+      UTILS.showError("Error updating book: " + error.message);
+    }
   },
 
   // Search book by ID
-  searchBook: function () {
+  searchBook: async function () {
     const bookId = document.getElementById("bookId").value.trim();
     if (!bookId) {
-      alert("Please enter Book ID");
+      UTILS.showError("Please enter Book ID");
       return;
     }
-    console.log("Searching for book:", bookId);
-    // TODO: Implement backend call
-    const book = {
-      id: bookId,
-      itemType: "book",
-      title: "Sample Book",
-      author: "Sample Author",
-      isbn: "123456789",
-      category: "Fiction",
-      quantity: 5,
-    };
-    document.getElementById("bookTitle").value = book.title;
-    document.getElementById("author").value = book.author;
-    document.getElementById("isbn").value = book.isbn;
-    document.getElementById("category").value = book.category;
-    document.getElementById("quantity").value = book.quantity;
-    document.querySelector(`input[value="${book.itemType}"]`).checked = true;
+    try {
+      const response = await API.books.getById(bookId);
+      if (response.success && response.data) {
+        const book = response.data;
+        document.getElementById("bookTitle").value = book.title;
+        document.getElementById("author").value = book.author;
+        document.getElementById("isbn").value = book.isbn;
+        document.getElementById("category").value = book.category;
+        document.getElementById("quantity").value = book.totalCopies;
+        document.querySelector(
+          `input[value="${book.itemType.toLowerCase()}"]`,
+        ).checked = true;
+        UTILS.showSuccess("Book found!");
+      }
+    } catch (error) {
+      UTILS.showError("Error searching book: " + error.message);
+    }
   },
 
   // Add new user
