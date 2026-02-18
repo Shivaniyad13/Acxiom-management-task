@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Membership - Library Management</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <h1>➕ Add New Membership</h1>
+    <a href="../dashboard.html" class="btn btn-nav">⬅️ Back to Dashboard</a>
+  </nav>
+  <div class="container">
+    <form id="addMembershipForm" class="form" onsubmit="return MAINTENANCE.validateAddMembershipForm(event)">
+      <div class="form-group">
+        <label for="membershipNumber">Membership Number: <span class="required">*</span></label>
+        <input type="text" id="membershipNumber" name="membershipNumber" required>
+        <button type="button" class="btn btn-small" onclick="MAINTENANCE.searchMemberByNumber()">Search &
+          Populate</button>
+      </div>
+      <div class="form-group">
+        <label for="memberName">Member Name: <span class="required">*</span></label>
+        <input type="text" id="memberName" name="memberName" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email: <span class="required">*</span></label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone: <span class="required">*</span></label>
+        <input type="tel" id="phone" name="phone" required>
+      </div>
+      <div class="form-group">
+        <label for="membershipType">Membership Type: <span class="required">*</span></label>
+        <select id="membershipType" name="membershipType" required>
+          <option>Select Type</option>
+          <option>Standard</option>
+          <option>Premium</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Membership Duration: <span class="required">*</span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="membershipDuration" value="6months" checked> 6 Months</label>
+          <label><input type="radio" name="membershipDuration" value="1year"> 1 Year</label>
+          <label><input type="radio" name="membershipDuration" value="2years"> 2 Years</label>
+        </div>
+      </div>
+      <div id="errorMessage" class="error-message" style="display: none;"></div>
+      <button type="submit" class="btn">Add Membership</button>
+    </form>
+  </div>
+  <script src="../js/maintenance.js"></script>
+</body>
+
+</html>

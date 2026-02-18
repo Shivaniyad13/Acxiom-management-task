@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay Fine - Library Management</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <h1>💰 Pay Fine</h1>
+    <a href="../dashboard.html" class="btn btn-nav">⬅️ Back to Dashboard</a>
+  </nav>
+  <div class="container">
+    <form id="finePayForm" class="form" onsubmit="return TRANSACTIONS.validateFinePayForm(event)">
+      <div class="form-group">
+        <label for="memberId">Member ID: <span class="required">*</span></label>
+        <input type="text" id="memberId" name="memberId" required>
+        <button type="button" class="btn btn-small" onclick="TRANSACTIONS.searchFines()">Search</button>
+      </div>
+      <div class="form-group">
+        <label for="memberName">Member Name:</label>
+        <input type="text" id="memberName" name="memberName" disabled>
+      </div>
+      <div class="form-group">
+        <label for="totalFine">Total Fine Amount:</label>
+        <input type="number" id="totalFine" name="totalFine" disabled>
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="finePaid" name="finePaid">
+          Fine Paid
+        </label>
+      </div>
+      <div class="form-group">
+        <label for="payAmount">Payment Amount: <span class="required">*</span></label>
+        <input type="number" id="payAmount" name="payAmount" required>
+      </div>
+      <div class="form-group">
+        <label for="paymentMethod">Payment Method: <span class="required">*</span></label>
+        <select id="paymentMethod" name="paymentMethod" required>
+          <option>Select Method</option>
+          <option>Cash</option>
+          <option>Card</option>
+          <option>Online Transfer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="paymentDate">Payment Date: <span class="required">*</span></label>
+        <input type="date" id="paymentDate" name="paymentDate" required>
+      </div>
+      <div class="form-group">
+        <label>Remarks:</label>
+        <textarea id="remarks" name="remarks" rows="3"></textarea>
+      </div>
+      <div id="errorMessage" class="error-message" style="display: none;"></div>
+      <button type="submit" class="btn">Confirm & Complete Transaction</button>
+    </form>
+  </div>
+  <script src="../js/transactions.js"></script>
+</body>
+
+</html>

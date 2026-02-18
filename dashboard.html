@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Library Management</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <h1>📚 Library Management Dashboard</h1>
+    <div class="nav-buttons">
+      <a href="chart.html" class="btn btn-nav">📊 Charts</a>
+      <button id="logoutBtn" class="btn btn-logout">🚪 Logout</button>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <aside class="sidebar">
+      <h3>📋 Menu</h3>
+      <ul id="menuList">
+        <!-- Menu items will be populated based on role -->
+      </ul>
+    </aside>
+
+    <main class="content">
+      <div id="contentArea">
+        <!-- Content will be loaded here -->
+        <div class="welcome-card">
+          <h2>👋 Welcome to Library Management System</h2>
+          <p>Select an option from the menu to get started.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/utils.js"></script>
+</body>
+
+</html>

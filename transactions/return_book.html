@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Return Book - Library Management</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <h1>📥 Return Book</h1>
+    <a href="../dashboard.html" class="btn btn-nav">⬅️ Back to Dashboard</a>
+  </nav>
+  <div class="container">
+    <form id="bookReturnForm" class="form" onsubmit="return TRANSACTIONS.validateReturnForm(event)">
+      <div class="form-group">
+        <label for="issueId">Issue ID: <span class="required">*</span></label>
+        <input type="text" id="issueId" name="issueId" required>
+        <button type="button" class="btn btn-small" onclick="TRANSACTIONS.searchIssueForReturn()">Search</button>
+      </div>
+      <div class="form-group">
+        <label for="memberId">Member ID:</label>
+        <input type="text" id="memberId" name="memberId" disabled>
+      </div>
+      <div class="form-group">
+        <label for="memberName">Member Name:</label>
+        <input type="text" id="memberName" name="memberName" disabled>
+      </div>
+      <div class="form-group">
+        <label for="bookId">Book ID:</label>
+        <input type="text" id="bookId" name="bookId" disabled>
+      </div>
+      <div class="form-group">
+        <label for="bookTitle">Book Title: <span class="required">*</span></label>
+        <input type="text" id="bookTitle" name="bookTitle" disabled>
+      </div>
+      <div class="form-group">
+        <label for="authorName">Author Name:</label>
+        <input type="text" id="authorName" name="authorName" disabled>
+      </div>
+      <div class="form-group">
+        <label for="serialNo">Serial No of Book: <span class="required">*</span></label>
+        <input type="text" id="serialNo" name="serialNo" disabled>
+      </div>
+      <div class="form-group">
+        <label for="issueDate">Issue Date:</label>
+        <input type="text" id="issueDate" name="issueDate" disabled>
+      </div>
+      <div class="form-group">
+        <label for="dueDate">Due Date:</label>
+        <input type="text" id="dueDate" name="dueDate" disabled>
+      </div>
+      <div class="form-group">
+        <label for="returnDate">Return Date: <span class="required">*</span></label>
+        <input type="date" id="returnDate" name="returnDate" required>
+      </div>
+      <div class="form-group">
+        <label for="fineAmount">Fine Amount:</label>
+        <input type="number" id="fineAmount" name="fineAmount" disabled>
+      </div>
+      <div id="errorMessage" class="error-message" style="display: none;"></div>
+      <button type="submit" class="btn">Confirm & Proceed to Fine Payment</button>
+    </form>
+  </div>
+  <script src="../js/transactions.js"></script>
+</body>
+
+</html>
