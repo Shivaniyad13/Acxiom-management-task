@@ -4,16 +4,20 @@
 const UTILS = {
   // Get base path for navigation
   getBasePathPrefix: function () {
-    const currentPath = window.location.pathname;
-    // If we're in a subdirectory (like /maintenance/), we need to go up
-    if (
-      currentPath.includes("/maintenance/") ||
-      currentPath.includes("/transactions/") ||
-      currentPath.includes("/reports/")
-    ) {
-      return "";
+    const currentPath = window.location.pathname || window.location.href;
+    // Normalize and strip query/hash
+    const cleanPath = currentPath.split("?")[0].split("#")[0];
+    // Split path and remove empty segments
+    const parts = cleanPath.split("/").filter(Boolean);
+    // If at root (no segments) return empty
+    if (parts.length === 0) return "";
+    // If last segment looks like a filename (contains a dot), remove it
+    if (parts[parts.length - 1].includes(".")) {
+      parts.pop();
     }
-    return "";
+    // For each folder depth we need one `../`
+    if (parts.length === 0) return "";
+    return parts.map(() => "..").join("/") + "/";
   },
 
   // Load menu based on user role
@@ -23,13 +27,8 @@ const UTILS = {
 
     if (!menuList) return;
 
-    // Detect if we're in a subdirectory
-    const currentPath = window.location.pathname;
-    const isInSubdirectory =
-      currentPath.includes("/maintenance/") ||
-      currentPath.includes("/transactions/") ||
-      currentPath.includes("/reports/");
-    const basePath = isInSubdirectory ? "../" : "";
+    // Compute base path prefix relative to current file location
+    const basePath = this.getBasePathPrefix();
 
     const menus = {
       admin: [
