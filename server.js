@@ -45,3 +45,11 @@ server.listen(PORT, () => {
   console.log(`🎉 Server running at http://localhost:${PORT}`);
   console.log(`📚 Library Management System is ready!`);
 });
+
+require("dotenv").config();
+
+const jwt = require("jsonwebtoken");
+
+jwt.sign(payload, process.env.JWT_SECRET);
+
+

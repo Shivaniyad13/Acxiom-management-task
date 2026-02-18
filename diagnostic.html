@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Diagnostic</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .diagnostic {
+      background: #f5f5f5;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 8px;
+      font-family: monospace;
+    }
+
+    .status-ok {
+      color: green;
+    }
+
+    .status-error {
+      color: red;
+    }
+
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      background: white;
+      border-left: 4px solid #667eea;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #764ba2;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <h1>🔧 System Diagnostic</h1>
+  </nav>
+
+  <div class="diagnostic">
+    <h2>Library Management System Diagnostic</h2>
+
+    <div class="test-section">
+      <h3>1️⃣ Authentication Status</h3>
+      <div id="authStatus"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>2️⃣ User Role</h3>
+      <div id="roleStatus"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>3️⃣ Menu Generation</h3>
+      <div id="menuStatus"></div>
+      <div style="margin-top: 10px;">
+        <button onclick="testLoginAsAdmin()">Login as Admin</button>
+        <button onclick="testLoginAsLibrarian()">Login as Librarian</button>
+        <button onclick="testLoginAsMember()">Login as Member</button>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>4️⃣ File Access Test</h3>
+      <div id="fileStatus"></div>
+      <div style="margin-top: 10px;">
+        <button onclick="testFileAccess()">Test File Access</button>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>5️⃣ Backend Connection</h3>
+      <div id="backendStatus"></div>
+      <div style="margin-top: 10px;">
+        <button onclick="testBackendConnection()">Test Backend</button>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>6️⃣ Quick Actions</h3>
+      <button onclick="goToDashboard()">Go to Dashboard</button>
+      <button onclick="goToAddBook()">Go to Add Book</button>
+      <button onclick="goToIssueBook()">Go to Issue Book</button>
+      <button onclick="clearStorage()">Clear Storage & Logout</button>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/utils.js"></script>
+  <script>
+    // Test Authentication
+    function testAuthStatus() {
+      const isLoggedIn = AUTH.isLoggedIn();
+      const user = AUTH.getCurrentUser();
+      const role = AUTH.getUserRole();
+
+      let html = `<p><strong>Logged In:</strong> ${isLoggedIn ? '<span class="status-ok">YES</span>' : '<span class="status-error">NO</span>'}</p>`;
+
+      if (user) {
+        html += `<p><strong>Username:</strong> ${user.username}</p>`;
+        html += `<p><strong>Role:</strong> ${role}</p>`;
+        html += `<p><strong>Login Time:</strong> ${user.loginTime}</p>`;
+      } else {
+        html += `<p><strong>User:</strong> <span class="status-error">Not logged in</span></p>`;
+      }
+
+      document.getElementById('authStatus').innerHTML = html;
+    }
+
+    // Test Role
+    function testRoleStatus() {
+      const role = AUTH.getUserRole();
+      let html = `<p><strong>Detected Role:</strong> ${role || '<span class="status-error">None - Please login first</span>'}</p>`;
+
+      if (role === 'admin') {
+        html += `<p><span class="status-ok">✓ Admin role detected - Full access</span></p>`;
+      } else if (role === 'librarian') {
+        html += `<p><span class="status-ok">✓ Librarian role detected</span></p>`;
+      } else if (role === 'member') {
+        html += `<p><span class="status-ok">✓ Member role detected</span></p>`;
+      }
+
+      document.getElementById('roleStatus').innerHTML = html;
+    }
+
+    // Test Menu Generation
+    function testMenuGeneration() {
+      const role = AUTH.getUserRole();
+      const basePath = UTILS.getBasePathPrefix();
+
+      let html = `<p><strong>Role:</strong> ${role || 'Not logged in'}</p>`;
+      html += `<p><strong>Base Path:</strong> "${basePath}"</p>`;
+
+      if (role) {
+        const menuDef = {
+          admin: 11,
+          librarian: 9,
+          member: 4
+        };
+        const expectedItems = menuDef[role];
+        html += `<p><span class="status-ok">✓ ${expectedItems} menu items generated for ${role}</span></p>`;
+      } else {
+        html += `<p><span class="status-error">✗ Cannot generate menu - please login first</span></p>`;
+      }
+
+      document.getElementById('menuStatus').innerHTML = html;
+    }
+
+    // Test File Access
+    async function testFileAccess() {
+      const files = [
+        'maintenance/add_book.html',
+        'transactions/book_issue.html',
+        'maintenance/user_management.html'
+      ];
+
+      let html = '<p><strong>Testing file access:</strong></p>';
+
+      for (let file of files) {
+        try {
+          const response = await fetch(file);
+          const status = response.ok ? 'OK' : 'ERROR ' + response.status;
+          const statusHtml = response.ok ? `<span class="status-ok">✓ ${status}</span>` : `<span class="status-error">✗ ${status}</span>`;
+          html += `<p>${file}: ${statusHtml}</p>`;
+        } catch (error) {
+          html += `<p>${file}: <span class="status-error">✗ ${error.message}</span></p>`;
+        }
+      }
+
+      document.getElementById('fileStatus').innerHTML = html;
+    }
+
+    // Test Backend Connection
+    async function testBackendConnection() {
+      let html = '<p><strong>Testing backend API:</strong></p>';
+
+      try {
+        const response = await fetch('http://localhost:5000/api/health');
+        const data = await response.json();
+        if (response.ok) {
+          html += `<p><span class="status-ok">✓ Backend Health: OK</span></p>`;
+          html += `<p>Message: ${data.message}</p>`;
+        } else {
+          html += `<p><span class="status-error">✗ Backend Health: FAILED</span></p>`;
+        }
+      } catch (error) {
+        html += `<p><span class="status-error">✗ Backend Connection: ${error.message}</span></p>`;
+        html += `<p>Make sure backend is running on port 5000</p>`;
+      }
+
+      document.getElementById('backendStatus').innerHTML = html;
+    }
+
+    // Test Logins
+    function testLoginAsAdmin() {
+      AUTH.login('admin', 'password');
+      location.reload();
+    }
+
+    function testLoginAsLibrarian() {
+      AUTH.login('librarian', 'password');
+      location.reload();
+    }
+
+    function testLoginAsMember() {
+      AUTH.login('John', 'password');
+      location.reload();
+    }
+
+    // Quick Navigation
+    function goToDashboard() {
+      if (!AUTH.isLoggedIn()) {
+        alert('Please login first!');
+        window.location.href = 'index.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    }
+
+    function goToAddBook() {
+      if (!AUTH.isLoggedIn()) {
+        alert('Please login first!');
+        window.location.href = 'index.html';
+      } else {
+        window.location.href = 'maintenance/add_book.html';
+      }
+    }
+
+    function goToIssueBook() {
+      if (!AUTH.isLoggedIn()) {
+        alert('Please login first!');
+        window.location.href = 'index.html';
+      } else {
+        window.location.href = 'transactions/book_issue.html';
+      }
+    }
+
+    function clearStorage() {
+      localStorage.clear();
+      sessionStorage.clear();
+      document.location.reload();
+    }
+
+    // Run all tests on page load
+    document.addEventListener('DOMContentLoaded', function () {
+      testAuthStatus();
+      testRoleStatus();
+      testMenuGeneration();
+    });
+  </script>
+</body>
+
+</html>

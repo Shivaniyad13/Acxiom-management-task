@@ -4,20 +4,16 @@
 const UTILS = {
   // Get base path for navigation
   getBasePathPrefix: function () {
-    const currentPath = window.location.pathname || window.location.href;
-    // Normalize and strip query/hash
-    const cleanPath = currentPath.split("?")[0].split("#")[0];
-    // Split path and remove empty segments
-    const parts = cleanPath.split("/").filter(Boolean);
-    // If at root (no segments) return empty
-    if (parts.length === 0) return "";
-    // If last segment looks like a filename (contains a dot), remove it
-    if (parts[parts.length - 1].includes(".")) {
-      parts.pop();
+    const currentPath = window.location.pathname;
+    // Check if we're in a subdirectory
+    if (
+      currentPath.includes("/maintenance/") ||
+      currentPath.includes("/transactions/") ||
+      currentPath.includes("/reports/")
+    ) {
+      return "../"; // Go up one level from subdirectory
     }
-    // For each folder depth we need one `../`
-    if (parts.length === 0) return "";
-    return parts.map(() => "..").join("/") + "/";
+    return ""; // Already at root, no prefix needed
   },
 
   // Load menu based on user role
